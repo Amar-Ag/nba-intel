@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: raw
+    schema: main
+    tables:
+      - name: raw_player_game_logs
+      - name: raw_team_game_logs
+      - name: raw_standings
