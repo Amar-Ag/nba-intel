@@ -11,7 +11,8 @@ from nba_api.stats.endpoints import playergamelogs, teamgamelogs, leaguestanding
 # 1. Connect to MinIO
 s3 = boto3.client(
     's3',
-    endpoint_url='http://nba_minio:9000',  # container name, not localhost
+    # endpoint_url='http://nba_minio:9000', 
+    endpoint_url='http://172.18.0.4:9000', # container name, not localhost
     aws_access_key_id='minioadmin',
     aws_secret_access_key='minioadmin',
     region_name='us-east-1'
