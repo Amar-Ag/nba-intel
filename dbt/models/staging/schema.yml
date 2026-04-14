@@ -1,0 +1,41 @@
+models:
+  - name: stg_player_game_logs
+    columns:
+      - name: game_id
+        tests:
+          - not_null
+      - name: player_id
+        tests:
+          - not_null
+      - name: win_loss
+        tests:
+          - not_null
+          - arguments:
+              values: ['W', 'L']
+
+  - name: stg_team_game_logs
+    columns:
+      - name: game_id
+        tests:
+          - not_null
+      - name: team_id
+        tests:
+          - not_null
+      - name: win_loss
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['W', 'L']
+
+  - name: stg_standings
+    columns:
+      - name: team_id
+        tests:
+          - not_null
+          - unique
+      - name: wins
+        tests:
+          - not_null
+      - name: losses
+        tests:
+          - not_null
