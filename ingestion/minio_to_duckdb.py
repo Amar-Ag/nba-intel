@@ -15,7 +15,7 @@ s3 = boto3.client(
 )
 
 # 2. Connect to DuckDB
-con = duckdb.connect("nba.duckdb")
+con = duckdb.connect("/workspaces/nba-intel/airflow/nba.duckdb")
 
 # 3. Function to load a parquet from MinIO into DuckDB
 def load_table(bucket: str, prefix: str, table_name: str):

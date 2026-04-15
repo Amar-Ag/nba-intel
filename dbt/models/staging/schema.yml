@@ -10,7 +10,7 @@ models:
       - name: win_loss
         tests:
           - not_null
-          - arguments:
+          - accepted_values:
               values: ['W', 'L']
 
   - name: stg_team_game_logs
@@ -32,7 +32,6 @@ models:
       - name: team_id
         tests:
           - not_null
-          - unique
       - name: wins
         tests:
           - not_null

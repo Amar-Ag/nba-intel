@@ -1,0 +1,10 @@
+services:
+  scheduler:
+    volumes:
+      - /workspaces/nba-intel/airflow/dags:/usr/local/airflow/dags
+  api-server:
+    volumes:
+      - /workspaces/nba-intel/airflow/dags:/usr/local/airflow/dags
+  dag-processor:
+    volumes:
+      - /workspaces/nba-intel/airflow/dags:/usr/local/airflow/dags
