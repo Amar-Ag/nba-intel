@@ -8,7 +8,11 @@ from chromadb.utils.embedding_functions.ollama_embedding_function import OllamaE
 con = duckdb.connect("/opt/duckdb/nba.duckdb")
 
 # 2. Connect to ChromaDB
-client = chromadb.HttpClient(host='nba_chromadb', port=8000)
+import socket
+
+# Resolve container names dynamically
+chroma_host = socket.gethostbyname('nba_chromadb')
+client = chromadb.HttpClient(host=chroma_host, port=8000)
 
 # 3. Set up Ollama embeddings
 embedding_function = OllamaEmbeddingFunction(
