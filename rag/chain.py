@@ -16,20 +16,45 @@ embedding_function = OllamaEmbeddingFunction(
 )
 
 # 3. Get or create the collection
-collection = client.get_or_create_collection(
+player_collection = client.get_or_create_collection(
     name="player_performance",
+    embedding_function=embedding_function
+)
+team_collection = client.get_collection(
+    name="team_summary", 
+    embedding_function=embedding_function
+)
+standings_collection = client.get_collection(
+    name="standings",
     embedding_function=embedding_function
 )
 
 # 4. Function to retrieve relevant summaries
-def retrieve(question: str, k: int = 8) -> str:
+def retrieve(question: str, k: int = 5) -> str:
     question_embedding = embedding_function([question])
-    results = collection.query(
+    
+    # Search all three collections
+    player_results = player_collection.query(
         query_embeddings=question_embedding,
         n_results=k
     )
-    docs = results["documents"][0] if results["documents"] else []
-    return "\n\n".join(docs)
+    team_results = team_collection.query(
+        query_embeddings=question_embedding,
+        n_results=k
+    )
+    standings_results = standings_collection.query(
+        query_embeddings=question_embedding,
+        n_results=k
+    )
+    
+    # Combine all results
+    all_docs = (
+        player_results["documents"][0] +
+        team_results["documents"][0] +
+        standings_results["documents"][0]
+    )
+    
+    return "\n\n".join(all_docs)
 
 # 5. Function to ask a question
 def ask(question: str) -> dict:
