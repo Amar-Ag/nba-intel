@@ -53,11 +53,13 @@ services:
       - airflow_data:/opt/airflow
       - /workspaces/nba-intel/airflow/dags:/opt/airflow/dags
       - /workspaces/nba-intel:/workspaces/nba-intel
+      - duckdb_data:/opt/duckdb
     command: >
       bash -c "rm -f /opt/airflow/airflow-webserver.pid &&
                airflow db init &&
                sleep 5 &&
                airflow users create --username admin --password admin --firstname Admin --lastname User --role Admin --email admin@example.com || true &&
+               chmod 666 /opt/duckdb/nba.duckdb 2>/dev/null || true &&
                airflow webserver --port 8080 &
                airflow scheduler"
     depends_on:
@@ -68,4 +70,5 @@ volumes:
   chroma_data:
   mlflow_data:
   airflow_data:
+  duckdb_data:
   

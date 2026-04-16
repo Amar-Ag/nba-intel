@@ -5,10 +5,10 @@ import chromadb
 from chromadb.utils.embedding_functions.ollama_embedding_function import OllamaEmbeddingFunction
 
 # 1. Connect to DuckDB
-con = duckdb.connect("/workspaces/nba-intel/nba.duckdb")
+con = duckdb.connect("/opt/duckdb/nba.duckdb")
 
 # 2. Connect to ChromaDB
-client = chromadb.HttpClient(host='172.18.0.3', port=8000)
+client = chromadb.HttpClient(host='nba_chromadb', port=8000)
 
 # 3. Set up Ollama embeddings
 embedding_function = OllamaEmbeddingFunction(

@@ -1,6 +1,9 @@
 # ingestion/nba_ingest.py
 
+import socket
+
 import boto3
+import boto3.session
 import pandas as pd
 import pyarrow as pa
 import pyarrow.parquet as pq
@@ -9,13 +12,13 @@ from datetime import datetime
 from nba_api.stats.endpoints import playergamelogs, teamgamelogs, leaguestandings
 
 # 1. Connect to MinIO
+minio_host = socket.gethostbyname('nba_minio')
 s3 = boto3.client(
     's3',
-    # endpoint_url='http://nba_minio:9000', 
-    endpoint_url='http://172.18.0.4:9000', # container name, not localhost
+    endpoint_url=f'http://{minio_host}:9000',
     aws_access_key_id='minioadmin',
     aws_secret_access_key='minioadmin',
-    region_name='us-east-1'
+    region_name='us-east-1',
 )
 
 BUCKET = "nba-raw"

@@ -1,21 +1,24 @@
 # ingestion/minio_to_duckdb.py
 
+import socket
+
 import boto3
+import boto3.session
 import duckdb
 import pandas as pd
 from io import BytesIO
 
 # 1. Connect to MinIO
+minio_host = socket.gethostbyname('nba_minio')
 s3 = boto3.client(
     's3',
-    endpoint_url='http://172.18.0.4:9000', 
+    endpoint_url=f'http://{minio_host}:9000',
     aws_access_key_id='minioadmin',
     aws_secret_access_key='minioadmin',
-    region_name='us-east-1'
+    region_name='us-east-1',
 )
-
 # 2. Connect to DuckDB
-con = duckdb.connect("/workspaces/nba-intel/airflow/nba.duckdb")
+con = duckdb.connect("/opt/duckdb/nba.duckdb")
 
 # 3. Function to load a parquet from MinIO into DuckDB
 def load_table(bucket: str, prefix: str, table_name: str):

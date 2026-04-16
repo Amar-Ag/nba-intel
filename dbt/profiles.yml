@@ -2,10 +2,10 @@ nba_intel:
   outputs:
     dev:
       type: duckdb
-      path: /workspaces/nba-intel/airflow/nba.duckdb
+      path: /opt/duckdb/nba.duckdb
       threads: 1
     prod:
       type: duckdb
-      path: /workspaces/nba-intel/airflow/nba.duckdb
+      path: /opt/duckdb/nba.duckdb
       threads: 4
   target: dev
