@@ -7,7 +7,7 @@
     "source=nba-intel_duckdb_data,target=/opt/duckdb,type=volume"
   ],
   "postCreateCommand": "pip install uv && sudo apt-get update && sudo apt-get install -y docker.io docker-compose zstd && curl -fsSL https://ollama.com/install.sh | sh && git config --global user.name 'Amar Agrawal' && git config --global user.email 'amaragrawal48@gmail.com'",
-  "postStartCommand": "sudo chmod 666 /var/run/docker.sock && docker network connect nba-intel_default $(hostname) 2>/dev/null || true && ollama serve & sleep 5 && ollama pull nomic-embed-text && ollama pull llama3.2",
+  "postStartCommand": "sudo chmod 666 /var/run/docker.sock && docker network connect nba-intel_default $(hostname) 2>/dev/null || true && ollama serve & sleep 5 && ollama pull nomic-embed-text && ollama pull llama3.2 && ollama pull llama3.2:1b",
   "forwardPorts": [9000, 9001, 5000, 8000, 8001],
   "portsAttributes": {
     "9000": {"label": "MinIO API"},
