@@ -137,6 +137,10 @@ def embed_standings():
     df = con.execute("SELECT * FROM fct_standings").df()
     print(f"Found {len(df)} rows")
 
+    # Deduplicate - keep latest record per team
+    df = df.drop_duplicates(subset=['team_id'], keep='last')
+    print(f"Found {len(df)} rows after deduplication")
+
     summaries = []
     ids = []
 
@@ -164,5 +168,5 @@ def embed_standings():
 # 6. Main
 if __name__ == "__main__":
     # embed_player_performance()
-    embed_team_summary()
+    # embed_team_summary()
     embed_standings()

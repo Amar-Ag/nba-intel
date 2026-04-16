@@ -20,11 +20,11 @@ player_collection = client.get_or_create_collection(
     name="player_performance",
     embedding_function=embedding_function
 )
-team_collection = client.get_collection(
+team_collection = client.get_or_create_collection(
     name="team_summary", 
     embedding_function=embedding_function
 )
-standings_collection = client.get_collection(
+standings_collection = client.get_or_create_collection(
     name="standings",
     embedding_function=embedding_function
 )
