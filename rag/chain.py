@@ -33,7 +33,10 @@ standings_collection = client.get_collection(
 def retrieve(question: str, k: int = 5) -> str:
     question_embedding = embedding_function([question])
     
-    # Search all three collections
+    # Always get standings context for conference/record questions
+    standings_k = 10 if any(word in question.lower() for word in 
+        ['conference', 'standing', 'record', 'best team', 'worst team', 'streak', 'leading']) else 3
+    
     player_results = player_collection.query(
         query_embeddings=question_embedding,
         n_results=k
@@ -44,14 +47,14 @@ def retrieve(question: str, k: int = 5) -> str:
     )
     standings_results = standings_collection.query(
         query_embeddings=question_embedding,
-        n_results=k
+        n_results=standings_k
     )
     
-    # Combine all results
+    # Put standings first so LLM sees it first
     all_docs = (
-        player_results["documents"][0] +
+        standings_results["documents"][0] +
         team_results["documents"][0] +
-        standings_results["documents"][0]
+        player_results["documents"][0]
     )
     
     return "\n\n".join(all_docs)
@@ -61,17 +64,20 @@ def ask(question: str) -> dict:
     context = retrieve(question)
     
     prompt = f"""You are an NBA analyst. Answer the question using ONLY the game data provided below.
-    If the data doesn't contain enough information, say so clearly. Do not make up statistics.
+Do NOT use any outside knowledge. If a team is mentioned in the data, use exactly what the data says.
+If the data doesn't contain enough information, say "I don't have enough data to answer this."
+
 
     Game data:
     {context}
 
     Question: {question}
 
-    Answer:"""
+    Answer (based only on the data above):"""
     
     response = ollama.chat(
-        model='llama3.2',
+        # model='llama3.2',
+        model='llama3.2:1b',  # changed from llama3.2
         messages=[{'role': 'user', 'content': prompt}]
     )
     
