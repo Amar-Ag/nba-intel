@@ -4,6 +4,16 @@ from chromadb.utils.embedding_functions.ollama_embedding_function import OllamaE
 import socket
 
 import ollama
+import os
+from groq import Groq
+from dotenv import load_dotenv
+from pathlib import Path
+
+env_path = Path('/workspaces/nba-intel/.env')  # Absolute path
+
+load_dotenv(dotenv_path=env_path)
+groq_client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+
 
 # 1. Connect to Chromadb and resolve container names dynamically
 chroma_host = socket.gethostbyname('nba_chromadb')
@@ -62,6 +72,7 @@ def retrieve(question: str, k: int = 5) -> str:
 # 5. Function to ask a question
 def ask(question: str) -> dict:
     context = retrieve(question)
+    context_truncated = context[:1500]  # limit context length
     
     prompt = f"""You are an NBA analyst. Answer the question using ONLY the game data provided below.
 Do NOT use any outside knowledge. If a team is mentioned in the data, use exactly what the data says.
@@ -69,22 +80,34 @@ If the data doesn't contain enough information, say "I don't have enough data to
 
 
     Game data:
-    {context}
+    {context_truncated}
 
     Question: {question}
 
     Answer (based only on the data above):"""
     
-    response = ollama.chat(
-        # model='llama3.2',
-        model='llama3.2:1b',  # changed from llama3.2
-        messages=[{'role': 'user', 'content': prompt}]
+    # response = ollama.chat(
+    #     # model='llama3.2',
+    #     # model='llama3.2:1b',  # changed from llama3.2
+    #     model='mistral',
+    #     # model='phi3:mini',
+    #     messages=[{'role': 'user', 'content': prompt}]
+    # )
+
+    response = groq_client.chat.completions.create(
+        model="llama-3.3-70b-versatile",
+        messages=[{"role": "user", "content": prompt}],
+        max_tokens=500
     )
     
     return {
-        "answer": response['message']['content'],
+        "answer": response.choices[0].message.content,  # Changed this line
         "context": context
     }
+    # return {
+    #     "answer": response['message']['content'],
+    #     "context": context
+    # }
 
 # 6. Main — test with a sample question
 if __name__ == "__main__":

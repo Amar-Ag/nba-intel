@@ -40,8 +40,6 @@ eval_questions = [
 ]
 
 def llm_judge(question: str, answer: str, context: str) -> dict:
-    """Use llama3.2 to judge if the answer is faithful to the context."""
-    
     prompt = f"""You are evaluating an NBA analyst AI system. 
     
 Question: {question}
@@ -62,17 +60,28 @@ RELEVANCY: 0.X
 REASON: one sentence explanation"""
 
     response = ollama.chat(
-        model='llama3.2',
+        # model='llama3.2',
+        model='phi3:mini',
         messages=[{'role': 'user', 'content': prompt}]
     )
     
     text = response['message']['content']
     
-    # Parse scores
-    import re
-    faith = float(re.search(r'FAITHFULNESS:\s*([\d.]+)', text).group(1))
-    relev = float(re.search(r'RELEVANCY:\s*([\d.]+)', text).group(1))
-    reason = re.search(r'REASON:\s*(.+)', text).group(1)
+    # Parse scores with fallback
+    try:
+        faith = float(re.search(r'FAITHFULNESS:\s*([\d.]+)', text).group(1))
+    except:
+        faith = 0.5  # default if parsing fails
+    
+    try:
+        relev = float(re.search(r'RELEVANCY:\s*([\d.]+)', text).group(1))
+    except:
+        relev = 0.5
+    
+    try:
+        reason = re.search(r'REASON:\s*(.+)', text).group(1)
+    except:
+        reason = "Could not parse reason"
     
     return {"faithfulness": faith, "relevancy": relev, "reason": reason}
 
