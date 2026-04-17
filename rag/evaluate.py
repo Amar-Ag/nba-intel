@@ -1,9 +1,9 @@
-from chain import ask
-from ragas import evaluate
-from ragas.metrics import faithfulness, answer_relevancy
-from datasets import Dataset
+# Keep only these
+import ollama
 import mlflow
+import re
 import socket
+from chain import ask
 
 # Fix MLflow to point to our container
 mlflow_host = socket.gethostbyname('nba_mlflow')
@@ -38,22 +38,6 @@ eval_questions = [
     "Which team is most likely to make a deep playoff run?",
     "Which player has improved the most over the last 10 games?",
 ]
-
-from ragas import evaluate
-from ragas.metrics import faithfulness, answer_relevancy
-from ragas.llms import LangchainLLMWrapper
-from ragas.embeddings import LangchainEmbeddingsWrapper
-from langchain_ollama import ChatOllama, OllamaEmbeddings
-
-# Configure RAGAS to use local Ollama instead of OpenAI
-ollama_llm = LangchainLLMWrapper(ChatOllama(model="llama3.2:1b"))
-ollama_embeddings = LangchainEmbeddingsWrapper(OllamaEmbeddings(model="nomic-embed-text"))
-
-# Apply to metrics
-faithfulness.llm = ollama_llm
-answer_relevancy.llm = ollama_llm
-answer_relevancy.embeddings = ollama_embeddings
-
 
 def llm_judge(question: str, answer: str, context: str) -> dict:
     """Use llama3.2 to judge if the answer is faithful to the context."""
